@@ -1,0 +1,44 @@
+#include<AFMotor.h> //motor library
+
+
+
+//defining the water sprinkler motor
+AF_DCMotor motor1(1,MOTOR12_64KHZ);
+
+
+//declaring Sensor Pins.
+int flame_sensor1 = A33;
+int flame_sensor2 = A2;
+
+//setting up motor speed and assigning input
+void setup() {
+  Serial.begin(9600);
+               motor1.setSpeed(200);
+               //set the speed to 200/255
+               pinMode(flame_sensor1, INPUT);
+               pinMode(flame_sensor2, INPUT);
+};
+
+//Main function begins here
+void loop() {
+ 
+//We are using two if conditions to test both flame sensors at once. 
+//If any one of them is true, It executes first serial print statement.
+  
+if (flame_sensor1 = 1)
+{
+ if (flame_sensor2 =1)
+ {    
+  Serial.println("Flame detected...! take action immediately.");    
+  delay(2000);  
+ //Motor starts running.
+  motor1.run(FORWARD);  
+ }
+else
+{    
+ //else condition.2611
+  Serial.println("No flame detected. stay cool"); 
+  delay(1000);
+}
+}
+}

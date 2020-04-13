@@ -1,0 +1,71 @@
+# requests module to send http request
+import requests
+
+# sender mobile number 
+sender_mob = '14372185806'
+# message informations it could be anything
+text = "xxxx xxxxxxxx xxxx Fire detected please respond as soon as possible manoj "
+
+# the texting api endpoit which will recive our http request
+base_url = "https://www.thetexting.com/rest/sms/json/Message/Send?"
+# this is my api credentials that can authenticat my request
+credentials = "api_key=yix89vvrpwp6kp4&api_secret=mtqt1vpqqzxokex&"
+# here I bind up sender mob number and message information in texting api 
+sender_reciver_msg = "from=test&to={}&text={}".format(sender_mob, text)
+
+# this is my final testing api endpoint 
+final_api_url = base_url+credentials+sender_reciver_msg
+
+# this is my django website which will recieve outt http request for data updation 
+my_website_endponit = 'http://munnasharma.pythonanywhere.com/rpi_request/'
+# here i declare sms status false by default
+sms_status = False
+# here just assigned data to new variables
+sms_text = text
+mob_number = sender_mob
+
+# here i sent http request on text api using get method
+api_response = requests.get(final_api_url)
+
+# here i compared with status_code 200 which stands for OK response
+if api_response.status_code == 200:
+    # if status is 200 smsm status will be True
+    sms_status = True
+    print('============== SMS sent successfully please check ==============')
+else:
+    print('============== !!! OOPS SMS failed ==============')
+
+# I have just display some star pattren for decoration (nothin with login process)
+for i in range(10):
+    print(10*"*".center(4))
+
+loc_service_url = "http://ip-api.com/json/"
+loc_data = requests.get(loc_service_url).json()
+
+# here i cretaed a packet for our http request for our website 
+
+post_data = {
+    
+    'alarm_status': True,
+    'sms_status': sms_status,
+    'mob_number': mob_number,
+    'sms_text': sms_text,
+    'country': loc_data['country'],
+    'region': loc_data['region'],
+    'city': loc_data['city'],
+    'lat': loc_data['lat'],
+    'lon':loc_data['lon']
+}
+
+# finnaly i have sent http request on my website with above packet using post request
+rpi_api = requests.post(my_website_endponit,data=(post_data))
+if rpi_api.status_code == 201:
+    # if this request reach our website and create a database record in our sqlite database
+    print('============== Data saved in  website ==============')
+else:
+    print('=== something went wrong data is not saving in database ===')
+
+# I have just display some star pattren for decoration (nothin with login process)    
+for i in range(2):
+    print(10*"*".center(4))
+print('============== code Finished ==============')
